@@ -80,6 +80,8 @@
 </template>
 
 <script>
+import * as request from '@/api/HostsManage'
+
 export default {
   name: 'HostsManage',
   components: {},
@@ -132,6 +134,23 @@ export default {
         value: 'status'
       }]
     },
+    getTableData () {
+      const obj = {
+        size: this.page.size,
+        current: this.page.current,
+        ...this.filter
+      }
+      request.getTableData(obj)
+        .then(res => {
+          this.tableData = res.data.data
+        })
+        .catch(err => {
+          Promise.reject(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     add () {
       // todo
     },
@@ -139,10 +158,12 @@ export default {
       // todo
     },
     handleFilter () {
-      // todo
+      this.page.current = 1
+      this.getTableData()
     },
-    currentChange () {
-      // todo
+    currentChange (val) {
+      this.page.current = val
+      this.getTableData()
     }
   }
 }
